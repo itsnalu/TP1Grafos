@@ -10,7 +10,7 @@ def main():
 
     Arquivo.carregar_arestas('entrada.txt', grafo)
 
-    grafo.imprimir_grafo() 
+    grafo.menu()
 
 if __name__ == "__main__":
     main()

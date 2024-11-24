@@ -33,3 +33,107 @@ class Grafo:
             for j in range(self.num_vertices):
                 print(f"{self.matriz_adj[i][j]:>4.1f}", end="")
             print()
+
+    def tamanho(self):
+            # retorna o tamanho do grafo
+            return self.num_arestas
+
+    def ordem(self):
+            # retorna a ordem do grafo
+            return self.num_vertices
+
+    def busca_em_largura(self, inicial):
+
+        # realiza a busca em largura no grafo a partir do vértice inicial.
+        # retorna:
+        # sequência de vértices visitados
+        # arestas da árvore de busca
+        # arestas que não fazem parte da árvore de busca
+
+        if inicial < 1 or inicial > self.num_vertices:
+            print("Erro: vértice inicial fora do intervalo")
+            return [], [], []
+
+        visitados = [False] * self.num_vertices
+        fila = []
+        sequencia_visitada = []
+        arestas_arvore = []
+        arestas_nao_arvore = []
+
+        # converte o índice do vértice para base 0
+        inicial -= 1
+        visitados[inicial] = True
+        fila.append(inicial)
+
+        processadas = set()
+
+        while fila:
+            vertice_atual = fila.pop(0)
+            sequencia_visitada.append(vertice_atual + 1)  # voltar para base 1
+
+            for i in range(self.num_vertices):
+                if self.matriz_adj[vertice_atual][i] > 0:  # existe aresta
+                    aresta = tuple(sorted((vertice_atual + 1, i + 1)))  # base 1, aresta ordenada
+                    if aresta in processadas:
+                        continue
+                    processadas.add(aresta)
+
+                    if not visitados[i]:
+                        # aresta da árvore de busca
+                        visitados[i] = True
+                        fila.append(i)
+                        arestas_arvore.append(aresta)
+                    else:
+                        # aresta que não pertence à árvore
+                        arestas_nao_arvore.append(aresta)
+
+        return sequencia_visitada, arestas_arvore, arestas_nao_arvore
+   
+
+    def menu(self):
+        while True:
+            print("\n" + "="*40)
+            print("                   MENU")
+            print("="*40)
+            print("1. Retornar a ordem do grafo")
+            print("2. Retornar o tamanho do grafo")
+            print("3. Retornar a densidade do grafo (ε(G))")
+            print("4. Retornar os vizinhos de um vértice")
+            print("5. Determinar o grau de um vértice")
+            print("6. Verificar se um vértice é articulação")
+            print("7. Busca em largura e arestas fora da árvore")
+            print("8. Determinar componentes conexas")
+            print("9. Verificar se o grafo possui ciclo")
+            print("10. Determinar distância e caminho mínimo")
+            print("0. Sair")
+            print("="*40)
+            opcao = input("Escolha uma opção: ")
+
+            if opcao == "1":
+                print("Ordem do grafo:", self.ordem())
+            elif opcao == "2":
+                print("Tamanho do grafo:", self.tamanho())
+            elif opcao == "3":
+                print(f"Densidade do grafo:")
+            elif opcao == "4":
+                break
+            elif opcao == "5":
+                break
+                print("Funcionalidade para verificar articulação ainda não implementada.")
+            elif opcao == "7":
+                vertice_inicial = int(input("Digite o vértice inicial para a busca em largura: "))
+                sequencia, arvore, nao_arvore = self.busca_em_largura(vertice_inicial)
+                print("Sequência de vértices visitados:", sequencia)
+                print("Arestas da árvore de busca:", arvore)
+                print("Arestas que não fazem parte da árvore de busca:", nao_arvore)
+            elif opcao == "8":
+                break
+            elif opcao == "9":
+                break
+            elif opcao == "10":
+                break
+            elif opcao == "0":
+                print("Saindo do programa...")
+                break
+            else:
+                print("Opção inválida! Tente novamente.")
