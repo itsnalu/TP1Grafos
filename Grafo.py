@@ -33,3 +33,26 @@ class Grafo:
             for j in range(self.num_vertices):
                 print(f"{self.matriz_adj[i][j]:>4.1f}", end="")
             print()
+
+    # TODO 1 - Representação de vértices (calcular grau dos vértices)
+    def grau_vertices(self):
+        graus = []
+        for i in range(self.num_vertices):
+            grau = 0
+            for j in range(self.num_vertices):
+                if self.matriz_adj[i][j] != 0:
+                    grau += 1
+            graus.append(grau)
+        #print()
+        for i in range(self.num_vertices):
+            print(f"Vértice {i+1} tem grau {graus[i]}")
+        print()
+
+
+
+
+
+    # TODO 2 - Algoritmo de Roy para contar o número de componentes conexas (não é dfs)
+    
+
+

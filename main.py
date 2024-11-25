@@ -11,6 +11,11 @@ def main():
     Arquivo.carregar_arestas('entrada.txt', grafo)
 
     grafo.imprimir_grafo() 
+    print()
+
+    grafo.grau_vertices()
+
+    grafo.componentes_conexas()
 
 if __name__ == "__main__":
     main()
