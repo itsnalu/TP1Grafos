@@ -33,3 +33,39 @@ class Grafo:
             for j in range(self.num_vertices):
                 print(f"{self.matriz_adj[i][j]:>4.1f}", end="")
             print()
+    
+    # TODO 1 - Implementar cálculo da densidade ε(G) com a fórmula ε(G) = 2 * |E| / (|V| * (|V| - 1)).
+    def calcular_densidade(self):
+        if self.num_vertices < 2:
+            return 0
+        return 2 * self.num_arestas / (self.num_vertices * (self.num_vertices - 1))
+    
+    # TODO 2 - Criar função que retorna a lista de vizinhos de um vértice fornecido.
+    def obter_vizinhos(self, vertice):
+        vertice-=1
+        vizinhos = []
+        for i in range(self.num_vertices):
+            if self.matriz_adj[vertice][i] != 0:
+                vizinhos.append(i+1)   
+        return vizinhos
+    
+    # TODO 3 - Implementar função que detecta a presença de ciclos no grafo usando DFS (busca em profundidade).
+    def detectar_ciclo(self):
+        visitados = set()
+
+        def dfs(v, pai):
+            visitados.add(v)
+            for vizinho in self.obter_vizinhos(v):
+                if vizinho not in visitados:
+                    if dfs(vizinho, v):
+                        return True
+                elif vizinho != pai:
+                    return True
+            return False
+
+        for vertice in range(self.num_vertices):
+            if vertice not in visitados:
+                if dfs(vertice, -1):  # O vértice inicial não tem pai
+                    return True
+        return False
+
