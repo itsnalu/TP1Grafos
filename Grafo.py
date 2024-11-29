@@ -125,7 +125,47 @@ class Grafo:
                         arestas_nao_arvore.append(aresta)
 
         return sequencia_visitada, arestas_arvore, arestas_nao_arvore
-   
+
+
+    # TODO 1 - Representação de vértices (calcular grau dos vértices)
+    def grau_vertices(self):
+        graus = []
+        for i in range(self.num_vertices):
+            grau = 0
+            for j in range(self.num_vertices):
+                if self.matriz_adj[i][j] != 0:
+                    grau += 1
+            graus.append(grau)
+        #print()
+        for i in range(self.num_vertices):
+            print(f"Vértice {i+1} tem grau {graus[i]}")
+        print()
+
+    # TODO 2 - Algoritmo de Roy para contar o número de componentes conexas (não é dfs)
+    def roy_componentes_conexas(self):
+        # Cria matriz de alcançabilidade com base na matriz de adjacência
+        alcançavel = [[1 if i == j or self.matriz_adj[i][j] != 0 else 0 for j in range(self.num_vertices)] for i in range(self.num_vertices)]
+        
+        # Algoritmo de Floyd-Warshall para calcular a alcançabilidade
+        for k in range(self.num_vertices):
+            for i in range(self.num_vertices):
+                for j in range(self.num_vertices):
+                    alcançavel[i][j] = alcançavel[i][j] or (alcançavel[i][k] and alcançavel[k][j])
+
+        # Determina os componentes conexos
+        visitados = [False] * self.num_vertices
+        componentes = 0
+
+        for i in range(self.num_vertices):
+            if not visitados[i]:
+                componentes += 1
+                for j in range(self.num_vertices):
+                    if alcançavel[i][j]:
+                        visitados[j] = True
+
+        print(f"O grafo possui {componentes} componente(s) conexa(s).")
+        print()
+
 
     def menu(self):
         while True:

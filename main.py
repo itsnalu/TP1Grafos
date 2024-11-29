@@ -16,6 +16,11 @@ def main():
 
 
 
+    print()
+
+    grafo.grau_vertices()
+
+    grafo.roy_componentes_conexas()
 
 if __name__ == "__main__":
     main()
