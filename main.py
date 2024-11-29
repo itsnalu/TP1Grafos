@@ -14,14 +14,6 @@ def main():
 
     grafo.menu()
 
-    densidade = grafo.calcular_densidade()
-    # print(f"Densidade do grafo: {densidade}")
-
-    vizinhos = grafo.obter_vizinhos(5)
-    # print(f"Vizinhos do vértice 5: {vizinhos}")
-
-    ciclo_presente = grafo.detectar_ciclo()
-    # print(f"Ciclo presente no grafo: {ciclo_presente}")
 
 
 

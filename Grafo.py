@@ -151,12 +151,13 @@ class Grafo:
             elif opcao == "2":
                 print("Tamanho do grafo:", self.tamanho())
             elif opcao == "3":
-                print(f"Densidade do grafo:")
+                print(f"Densidade do grafo:", self.calcular_densidade())
             elif opcao == "4":
-                break
+                vizinhos = self.obter_vizinhos(int(input("Digite o vértice para obter os vizinhos: ")))
+                print(f"Vizinhos do vértice: {vizinhos}")
             elif opcao == "5":
-                break
                 print("Funcionalidade para verificar articulação ainda não implementada.")
+                break
             elif opcao == "7":
                 vertice_inicial = int(input("Digite o vértice inicial para a busca em largura: "))
                 sequencia, arvore, nao_arvore = self.busca_em_largura(vertice_inicial)
@@ -166,7 +167,7 @@ class Grafo:
             elif opcao == "8":
                 break
             elif opcao == "9":
-                break
+                print(f"Ciclo presente no grafo: {'Sim' if self.detectar_ciclo() else 'Não'}")
             elif opcao == "10":
                 break
             elif opcao == "0":
