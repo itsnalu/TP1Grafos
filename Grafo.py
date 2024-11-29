@@ -196,7 +196,8 @@ class Grafo:
                 vizinhos = self.obter_vizinhos(int(input("Digite o vértice para obter os vizinhos: ")))
                 print(f"Vizinhos do vértice: {vizinhos}")
             elif opcao == "5":
-                print("Funcionalidade para verificar articulação ainda não implementada.")
+                print("Lista de graus dos vértices: ")
+                self.grau_vertices()
                 break
             elif opcao == "7":
                 vertice_inicial = int(input("Digite o vértice inicial para a busca em largura: "))
@@ -205,6 +206,7 @@ class Grafo:
                 print("Arestas da árvore de busca:", arvore)
                 print("Arestas que não fazem parte da árvore de busca:", nao_arvore)
             elif opcao == "8":
+                self.roy_componentes_conexas()
                 break
             elif opcao == "9":
                 print(f"Ciclo presente no grafo: {'Sim' if self.detectar_ciclo() else 'Não'}")
