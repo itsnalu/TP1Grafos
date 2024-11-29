@@ -303,6 +303,10 @@ class Grafo:
                 print("Lista de graus dos vértices: ")
                 self.grau_vertices()
                 break
+            elif opcao == "6":
+                ponto_articulacao = self.ponto_articulacao()
+                print(f"Número de pontos de articulação: {len(ponto_articulacao)}")
+                print(f"Pontos de articulação: {ponto_articulacao}")
             elif opcao == "7":
                 vertice_inicial = int(input("Digite o vértice inicial para a busca em largura: "))
                 sequencia, arvore, nao_arvore = self.busca_em_largura(vertice_inicial)
@@ -315,7 +319,13 @@ class Grafo:
             elif opcao == "9":
                 print(f"Ciclo presente no grafo: {'Sim' if self.detectar_ciclo() else 'Não'}")
             elif opcao == "10":
-                break
+                 # Distância e Caminho Mínimo
+                origem = 1  # Vértice inicial para o cálculo de caminhos mínimos
+                print("Digite a origem: ")
+                origem = int(input())
+                print("\nCalculando distâncias e caminhos mínimos...")
+                if(self.bellman_ford(origem)):
+                    self.imprimir_caminhos(origem)
             elif opcao == "0":
                 print("Saindo do programa...")
                 break
