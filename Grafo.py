@@ -99,10 +99,11 @@ class Grafo:
 
     def imprimir_caminhos(self, origem):
         origem -= 1  # Ajusta para índice baseado em 0
-        print(f"Caminhos mínimos a partir do vértice {origem + 1}:\n")
+        resultado = f"Caminhos mínimos a partir do vértice {origem + 1}:\n"
+        
         for v in range(self.num_vertices):
             if self.distancias[v] == float('inf'):
-                print(f"Vértice {v + 1} não é alcançável")
+                resultado += f"Vértice {v + 1} não é alcançável\n"
             else:
                 caminho = []
                 atual = v
@@ -110,7 +111,10 @@ class Grafo:
                     caminho.append(atual + 1)  # Ajusta para índice 1
                     atual = self.predecessores[atual]
                 caminho.reverse()  # Reverte para obter o caminho na ordem correta
-                print(f"Para {v + 1}: distância = {self.distancias[v]:.1f}, caminho = {' -> '.join(map(str, caminho))}")
+                resultado += f"Para {v + 1}: distância = {self.distancias[v]:.1f}, caminho = {' -> '.join(map(str, caminho))}\n"
+
+        return resultado
+
 
     def printarDistancias(self, dist):
         print("Matrix de menores distâncias entre cada par de vértices:")
@@ -267,8 +271,9 @@ class Grafo:
                     if alcançavel[i][j]:
                         visitados[j] = True
 
-        print(f"O grafo possui {componentes} componente(s) conexa(s).")
-        print()
+        # Retorna o número de componentes conexas
+        return componentes
+
 
 
     def menu(self):
@@ -314,7 +319,7 @@ class Grafo:
                 print("Arestas da árvore de busca:", arvore)
                 print("Arestas que não fazem parte da árvore de busca:", nao_arvore)
             elif opcao == "8":
-                self.roy_componentes_conexas()
+                print(self.roy_componentes_conexas())
                 break
             elif opcao == "9":
                 print(f"Ciclo presente no grafo: {'Sim' if self.detectar_ciclo() else 'Não'}")
@@ -325,7 +330,7 @@ class Grafo:
                 origem = int(input())
                 print("\nCalculando distâncias e caminhos mínimos...")
                 if(self.bellman_ford(origem)):
-                    self.imprimir_caminhos(origem)
+                    print(self.imprimir_caminhos(origem))
             elif opcao == "0":
                 print("Saindo do programa...")
                 break
