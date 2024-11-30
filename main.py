@@ -1,26 +1,34 @@
 from Grafo import Grafo
 import Arquivo
 import tkinter as tk
-from tkinter import messagebox, simpledialog
+from tkinter import messagebox, filedialog
 import sys
 
 class GrafoApp:
     def __init__(self, master, grafo):
         self.master = master
         self.grafo = grafo
-        master.title("Grafo App")
-        master.configure(bg="#f0f8ff")  # Cor de fundo suave
+        self.input_action = None  # Guarda a ação que será executada após a entrada do usuário
 
-        # Título da aplicação
+        master.title("Análise de Grafos")
+        master.configure(bg="#f0f4f8")
+
+        # Título com estilo
+        self.title_frame = tk.Frame(master, bg="#37474f", pady=10)
+        self.title_frame.grid(row=0, column=0, columnspan=2, sticky="nsew")
         self.label = tk.Label(
-            master,
-            text="Escolha uma opção:",
-            bg="#f0f8ff",
-            font=("Arial", 14, "bold")
+            self.title_frame,
+            text="Ferramenta de Análise de Grafos",
+            bg="#37474f",
+            fg="white",
+            font=("Arial", 16, "bold")
         )
-        self.label.pack(pady=10)
+        self.label.pack()
 
-        # Botões com estilos
+        # Frame de botões
+        self.buttons_frame = tk.Frame(master, bg="#f0f4f8")
+        self.buttons_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nw")
+
         self.buttons = [
             ("Ordem do grafo", self.ordem),
             ("Tamanho do grafo", self.tamanho),
@@ -35,176 +43,180 @@ class GrafoApp:
             ("Sair", self.sair)
         ]
 
-        # Criação de botões
-        for (text, func) in self.buttons:
+        for i, (text, func) in enumerate(self.buttons):
             button = tk.Button(
-                master,
+                self.buttons_frame,
                 text=text,
                 command=func,
-                width=30,
-                height=2,
-                bg="#4682b4",  # Azul claro
-                fg="white",  # Texto branco
+                width=25,
+                bg="#0288d1",
+                fg="white",
                 font=("Arial", 10, "bold"),
-                relief="raised"
+                activebackground="#01579b",
+                activeforeground="white"
             )
-            button.pack(pady=5)
+            button.grid(row=i, column=0, pady=5, padx=5, sticky="w")
 
-        # Área de resultados
-        self.result_text = tk.Text(
-            master,
-            height=10,
-            width=50,
-            bg="#ffffff",  # Fundo branco
-            fg="#000000",  # Texto preto
-            font=("Courier", 10)
+        # Área de resultados com rolagem
+        self.result_frame = tk.Frame(master, bg="#f0f4f8")
+        self.result_frame.grid(row=1, column=1, padx=10, pady=10, sticky="ne")
+
+        self.result_label = tk.Label(
+            self.result_frame,
+            text="Resultados:",
+            bg="#f0f4f8",
+            font=("Arial", 12, "bold")
         )
-        self.result_text.pack(pady=10)
+        self.result_label.pack(anchor="w")
 
-    # Métodos (mesmo código das funções anteriores)
+        self.text_scrollbar = tk.Scrollbar(self.result_frame)
+        self.result_text = tk.Text(
+            self.result_frame,
+            height=20,
+            width=50,
+            bg="#ffffff",
+            fg="#000000",
+            font=("Courier", 10),
+            bd=2,
+            relief="groove",
+            wrap="word",
+            yscrollcommand=self.text_scrollbar.set
+        )
+        self.text_scrollbar.config(command=self.result_text.yview)
+        self.text_scrollbar.pack(side="right", fill="y")
+        self.result_text.pack(side="left", fill="both", expand=True)
+
+        # Campo de entrada de dados do usuário
+        self.input_frame = tk.Frame(master, bg="#f0f4f8", pady=10)
+        self.input_frame.grid(row=2, column=0, columnspan=2, sticky="nsew")
+
+        self.instruction_label = tk.Label(
+            self.input_frame,
+            text="Instruções aparecerão aqui.",
+            bg="#f0f4f8",
+            font=("Arial", 12)
+        )
+        self.instruction_label.pack(anchor="w")
+
+        self.user_input = tk.Entry(
+            self.input_frame,
+            width=40,
+            font=("Arial", 12),
+            relief="solid"
+        )
+        self.user_input.pack(side="left", padx=10)
+
+        self.submit_button = tk.Button(
+            self.input_frame,
+            text="Confirmar",
+            command=self.process_input,
+            bg="#0288d1",
+            fg="white",
+            font=("Arial", 10, "bold"),
+            activebackground="#01579b",
+            activeforeground="white"
+        )
+        self.submit_button.pack(side="left")
+
+    # Funções principais
     def ordem(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        result = self.grafo.ordem()
-        self.result_text.insert(tk.END, f"Ordem do grafo: {result}\n")
+        self.exibir_resultado(f"Ordem do grafo: {self.grafo.ordem()}")
 
     def tamanho(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        result = self.grafo.tamanho()
-        self.result_text.insert(tk.END, f"Tamanho do grafo: {result}\n")
+        self.exibir_resultado(f"Tamanho do grafo: {self.grafo.tamanho()}")
 
     def densidade(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        result = self.grafo.calcular_densidade()
-        self.result_text.insert(tk.END, f"Densidade do grafo: {result}\n")
+        self.exibir_resultado(f"Densidade do grafo: {self.grafo.calcular_densidade()}")
 
     def obter_vizinhos(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        try:
-            vertice = simpledialog.askinteger(
-                "Obter Vizinhos",
-                "Digite o vértice para obter os vizinhos:"
-            )
-            if vertice is None:
-                self.result_text.insert(tk.END, "Operação cancelada pelo usuário.\n")
-                return
-
-            result = self.grafo.obter_vizinhos(vertice)
-            self.result_text.insert(tk.END, f"Vizinhos do vértice {vertice}: {result}\n")
-        except Exception as e:
-            self.result_text.insert(tk.END, f"Erro: {str(e)}\n")
+        self.instruction_label.config(text="Digite o vértice para obter os vizinhos:")
+        self.input_action = lambda vertice: self.exibir_resultado(
+            f"Vizinhos do vértice {vertice}: {self.grafo.obter_vizinhos(int(vertice))}"
+        )
 
     def grau_vertices(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        try:
-            graus = []
-            for i in range(self.grafo.num_vertices):
-                grau = 0
-                for j in range(self.grafo.num_vertices):
-                    if self.grafo.matriz_adj[i][j] != 0:
-                        grau += 1
-                graus.append(grau)
-
-            self.result_text.insert(tk.END, "Graus dos vértices:\n")
-            for i, grau in enumerate(graus, start=1):
-                self.result_text.insert(tk.END, f"Vértice {i}: Grau {grau}\n")
-        except Exception as e:
-            self.result_text.insert(tk.END, f"Erro ao calcular os graus dos vértices: {str(e)}\n")
+        graus = [sum(1 for j in range(self.grafo.num_vertices) if self.grafo.matriz_adj[i][j] != 0)
+                 for i in range(self.grafo.num_vertices)]
+        self.exibir_resultado("Graus dos vértices:\n" + "\n".join(
+            f"Vértice {i + 1}: Grau {grau}" for i, grau in enumerate(graus)))
 
     def pontos_articulacao(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        result = self.grafo.ponto_articulacao()
-        self.result_text.insert(tk.END, f"Número de pontos de articulação: {len(result)}\n")
-        self.result_text.insert(tk.END, f"Pontos de articulação: {result}\n")
+        pontos = self.grafo.ponto_articulacao()
+        self.exibir_resultado(f"Pontos de articulação: {pontos}")
 
     def busca_em_largura(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        try:
-            vertice_inicial = simpledialog.askinteger(
-                "Busca em Largura",
-                "Digite o vértice inicial para a busca em largura:"
-            )
-            if vertice_inicial is None:
-                self.result_text.insert(tk.END, "Operação cancelada pelo usuário.\n")
-                return
-
-            sequencia, arvore, nao_arvore = self.grafo.busca_em_largura(vertice_inicial)
-            self.result_text.insert(tk.END, f"Sequência de vértices visitados: {sequencia}\n")
-            self.result_text.insert(tk.END, f"Arestas da árvore de busca: {arvore}\n")
-            self.result_text.insert(tk.END, f"Arestas que não fazem parte da árvore de busca: {nao_arvore}\n")
-        except Exception as e:
-            self.result_text.insert(tk.END, f"Erro: {str(e)}\n")
+        self.instruction_label.config(text="Digite o vértice inicial para a busca em largura:")
+        self.input_action = lambda vertice: self.exibir_resultado(
+            f"Busca em largura a partir do vértice {vertice}: {self.grafo.busca_em_largura(int(vertice))}"
+        )
 
     def componentes_conexas(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        try:
-            num_componentes = self.grafo.roy_componentes_conexas()
-            self.result_text.insert(tk.END, f"O grafo possui {num_componentes} componente(s) conexa(s).\n")
-        except Exception as e:
-            self.result_text.insert(tk.END, f"Erro ao calcular os componentes conexos: {str(e)}\n")
+        componentes = self.grafo.roy_componentes_conexas()
+        self.exibir_resultado(f"O grafo possui {componentes} componente(s) conexa(s).")
 
     def detectar_ciclo(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
-        result = self.grafo.detectar_ciclo()
-        self.result_text.insert(tk.END, f"Ciclo presente no grafo: {'Sim' if result else 'Não'}\n")
+        tem_ciclo = self.grafo.detectar_ciclo()
+        self.exibir_resultado(f"O grafo {'contém' if tem_ciclo else 'não contém'} ciclos.")
 
     def caminho_minimo(self):
-        self.result_text.delete("1.0", tk.END)  # Limpa mensagens anteriores
+        self.instruction_label.config(
+            text="Digite o vértice de origem para calcular o caminho mínimo:"
+        )
+        self.input_action = self._calcular_caminho_minimo
+
+    def _calcular_caminho_minimo(self, origem):
         try:
-            origem = simpledialog.askinteger(
-                "Distância e Caminho Mínimo",
-                "Digite o vértice de origem:"
-            )
-            if origem is None:
-                self.result_text.insert(tk.END, "Operação cancelada pelo usuário.\n")
-                return
-
-            if self.grafo.bellman_ford(origem):
-                caminhos = self.grafo.imprimir_caminhos(origem)
-                self.result_text.insert(tk.END, caminhos)
+            origem = int(origem)  # Converte o valor digitado para inteiro
+            if self.grafo.bellman_ford(origem):  # Supondo que `bellman_ford` retorna True/False
+                resultado = self.grafo.imprimir_caminhos(origem)  # Chama o método de impressão
+                self.exibir_resultado(f"Caminhos mínimos a partir do vértice {origem}:\n{resultado}")
             else:
-                self.result_text.insert(tk.END, "Erro ao calcular caminhos mínimos: Ciclo de peso negativo detectado!\n")
+                self.exibir_resultado("Erro: Ciclo de peso negativo detectado no grafo!")
         except Exception as e:
-            self.result_text.insert(tk.END, f"Erro: {str(e)}\n")
-
+            self.exibir_resultado(f"Erro ao calcular caminhos mínimos: {str(e)}")
 
 
     def sair(self):
-        self.master.destroy()  # Fecha a janela do Tkinter
-        sys.exit()  # Fecha o terminal (o script termina completamente)
+        self.master.destroy()
+        sys.exit()
 
+    # Funções auxiliares
+    def exibir_resultado(self, texto):
+        self.result_text.delete("1.0", tk.END)
+        self.result_text.insert(tk.END, texto + "\n")
+        self.instruction_label.config(text="Instruções aparecerão aqui.")
+        self.user_input.delete(0, tk.END)
+
+    def process_input(self):
+        entrada = self.user_input.get()
+        if entrada and self.input_action:
+            try:
+                self.input_action(entrada)
+                self.input_action = None
+            except Exception as e:
+                self.exibir_resultado(f"Erro: {e}")
 
 def main():
-    # Criação da janela principal temporária para solicitar o arquivo
     root = tk.Tk()
-    root.withdraw()  # Oculta a janela principal enquanto solicita o arquivo
-
-    # Solicita o nome do arquivo de entrada
-    arquivo_entrada = simpledialog.askstring(
-        "Entrada de Arquivo",
-        "Digite o nome do arquivo de entrada (ex: entrada.txt):"
+    root.withdraw()
+    arquivo_entrada = filedialog.askopenfilename(
+        title="Selecione o arquivo de entrada",
+        filetypes=(("Arquivos de Texto", "*.txt"), ("Todos os Arquivos", "*.*"))
     )
-
-    # Verifica se o usuário cancelou ou não inseriu o nome
     if not arquivo_entrada:
         messagebox.showerror("Erro", "Nenhum arquivo especificado. Encerrando o programa.")
         return
-
     try:
-        # Carrega o grafo usando o arquivo especificado
         num_vertices = Arquivo.carregar_num_vertices(arquivo_entrada)
         grafo = Grafo(num_vertices)
         Arquivo.carregar_arestas(arquivo_entrada, grafo)
-
-        # Exibe a aplicação principal
-        root = tk.Tk()
+        root.deiconify()
         app = GrafoApp(root, grafo)
         root.mainloop()
-
     except FileNotFoundError:
         messagebox.showerror("Erro", f"Arquivo '{arquivo_entrada}' não encontrado.")
     except Exception as e:
         messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
-
 
 if __name__ == "__main__":
     main()
