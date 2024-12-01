@@ -42,8 +42,8 @@ class Grafo:
             self.tempo += 1
 
             for i in range(self.num_vertices):
-                if self.matriz_adj[v][i] != 0:  # Se existe uma aresta
-                    if not visitado[i]:  # Se o vértice i não foi visitado
+                if self.matriz_adj[v][i] != 0:  # se existe uma aresta
+                    if not visitado[i]:  # se o vértice i não foi visitado
                         parent[i] = v
                         children += 1
                         dfs(i, visitado, disc, low, parent, pontos)
@@ -54,7 +54,7 @@ class Grafo:
                             pontos.add(v)
                         if parent[v] != -1 and low[i] >= disc[v]:
                             pontos.add(v)
-                    elif i != parent[v]:  # Atualizar low value para ciclo
+                    elif i != parent[v]:  # atualizar low value para ciclo
                         low[v] = min(low[v], disc[i])
 
         visitado = [False] * self.num_vertices
@@ -68,25 +68,25 @@ class Grafo:
             if not visitado[i]:
                 dfs(i, visitado, disc, low, parent, pontos)
 
-        return [p + 1 for p in pontos]  # Retorna os pontos de articulação (1-indexados)
+        return [p + 1 for p in pontos]  # retorna os pontos de articulação (1-indexados)
 
     def bellman_ford(self, origem):
-        origem -= 1  # Ajusta para índice baseado em 0
+        origem -= 1  # ajusta para índice baseado em 0
         self.distancias = [float('inf')] * self.num_vertices
         self.predecessores = [-1] * self.num_vertices
         self.distancias[origem] = 0
 
-        # Relaxa as arestas |V| - 1 vezes
+        # relaxa as arestas |V| - 1 vezes
         for _ in range(self.num_vertices - 1):
             for u in range(self.num_vertices):
                 for v in range(self.num_vertices):
-                    if self.matriz_adj[u][v] != 0:  # Existe uma aresta
+                    if self.matriz_adj[u][v] != 0:  # existe uma aresta
                         peso = self.matriz_adj[u][v]
                         if self.distancias[u] + peso < self.distancias[v]:
                             self.distancias[v] = self.distancias[u] + peso
                             self.predecessores[v] = u
 
-        # Verifica ciclos negativos
+        # verifica ciclos negativos
         for u in range(self.num_vertices):
             for v in range(self.num_vertices):
                 if self.matriz_adj[u][v] != 0:
@@ -115,36 +115,14 @@ class Grafo:
 
         return resultado
 
-    def printar_distancias(self, dist):
-        print("Matrix de menores distâncias entre cada par de vértices:")
-        for i in range(len(dist)):
-            for j in range(len(dist)):
-                if dist[i][j] == float('inf'):
-                    print("%7s" % "∞", end=" ")
-                else:
-                    print("%7d" % dist[i][j], end=" ")
-            print()
-
-    def floyd_warshall(self):
-        num_vertices = self.num_vertices
-        
-        # Criar uma cópia da matriz de adjacência para evitar modificações
-        dist = [row[:] for row in self.matriz_adj]
-        
-        for k in range(num_vertices):
-            for i in range(num_vertices):
-                for j in range(num_vertices):
-                    # Atualizar dist[i][j] se passar por k for mais curto
-                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
-        return dist
     
-    # TODO 1 - Implementar cálculo da densidade ε(G) com a fórmula ε(G) = 2 * |E| / (|V| * (|V| - 1)).
+    # TODO 1 - implementar cálculo da densidade ε(G) com a fórmula ε(G) = 2 * |E| / (|V| * (|V| - 1)).
     def calcular_densidade(self):
         if self.num_vertices < 2:
             return 0
         return 2 * self.num_arestas / (self.num_vertices * (self.num_vertices - 1))
     
-    # TODO 2 - Criar função que retorna a lista de vizinhos de um vértice fornecido.
+    # TODO 2 - criar função que retorna a lista de vizinhos de um vértice fornecido.
     def obter_vizinhos(self, vertice):
         vertice-=1
         vizinhos = []
@@ -153,7 +131,7 @@ class Grafo:
                 vizinhos.append(i+1)   
         return vizinhos
     
-    # TODO 3 - Implementar função que detecta a presença de ciclos no grafo usando DFS (busca em profundidade).
+    # TODO 3 - implementar função que detecta a presença de ciclos no grafo usando DFS (busca em profundidade).
     def detectar_ciclo(self):
         visitados = set()
 
@@ -231,7 +209,7 @@ class Grafo:
         return sequencia_visitada, arestas_arvore, arestas_nao_arvore
 
 
-    # TODO 1 - Representação de vértices (calcular grau dos vértices)
+    # TODO 1 - representação de vértices (calcular grau dos vértices)
     def grau_vertices(self):
         graus = []
         for i in range(self.num_vertices):
@@ -245,18 +223,18 @@ class Grafo:
             print(f"Vértice {i+1} tem grau {graus[i]}")
         print()
 
-    # TODO 2 - Algoritmo de Roy para contar o número de componentes conexas (não é dfs)
+    # TODO 2 - algoritmo de Roy para contar o número de componentes conexas (não é dfs)
     def roy_componentes_conexas(self):
-        # Cria matriz de alcançabilidade com base na matriz de adjacência
+        # cria matriz de alcançabilidade com base na matriz de adjacência
         alcançavel = [[1 if i == j or self.matriz_adj[i][j] != 0 else 0 for j in range(self.num_vertices)] for i in range(self.num_vertices)]
         
-        # Algoritmo de Floyd-Warshall para calcular a alcançabilidade
+        # algoritmo de Floyd-Warshall para calcular a alcançabilidade
         for k in range(self.num_vertices):
             for i in range(self.num_vertices):
                 for j in range(self.num_vertices):
                     alcançavel[i][j] = alcançavel[i][j] or (alcançavel[i][k] and alcançavel[k][j])
 
-        # Determina os componentes conexos
+        # determina os componentes conexos
         visitados = [False] * self.num_vertices
         componentes = 0
 
@@ -267,7 +245,7 @@ class Grafo:
                     if alcançavel[i][j]:
                         visitados[j] = True
 
-        # Retorna o número de componentes conexas
+        # retorna o número de componentes conexas
         return componentes
 
 
@@ -303,7 +281,6 @@ class Grafo:
             elif opcao == "5":
                 print("Lista de graus dos vértices: ")
                 self.grau_vertices()
-                break
             elif opcao == "6":
                 ponto_articulacao = self.ponto_articulacao()
                 print(f"Número de pontos de articulação: {len(ponto_articulacao)}")
@@ -316,7 +293,6 @@ class Grafo:
                 print("Arestas que não fazem parte da árvore de busca:", nao_arvore)
             elif opcao == "8":
                 print(self.roy_componentes_conexas())
-                break
             elif opcao == "9":
                 print(f"Ciclo presente no grafo: {'Sim' if self.detectar_ciclo() else 'Não'}")
             elif opcao == "10":
