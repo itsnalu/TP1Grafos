@@ -8,11 +8,11 @@ import sys
 def main():
     print("1 - Saida no terminal")
     print("2 - Saida por interface")
-    saida = int(input("Escolha a saida desejada:"))
+    saida = int(input("Escolha a saida desejada: "))
 
     match(saida):
         case 1:
-            arquivo = input("Digite o numero do arquivo + .txt:")
+            arquivo = input("Digite o nome do arquivo junto com o .txt: ")
             num_vertices = Arquivo.carregar_num_vertices(arquivo)
 
             print(f"Número de vértices: {num_vertices}")
