@@ -195,49 +195,46 @@ class GrafoApp:
                 self.input_action = None
             except Exception as e:
                 self.exibir_resultado(f"Erro: {e}")
-    
+
     @staticmethod
-    def processar_interface():
-        root = tk.Tk()
-        root.withdraw()
-        arquivo_entrada = filedialog.askopenfilename(
-            title="Selecione o arquivo de entrada",
-            filetypes=(("Arquivos de Texto", "*.txt"), ("Todos os Arquivos", "*.*"))
-        )
-        if not arquivo_entrada:
-            messagebox.showerror("Erro", "Nenhum arquivo especificado. Encerrando o programa.")
-            return
-
+    def inicializa_interface():
         try:
-            num_vertices = Arquivo.carregar_num_vertices(arquivo_entrada)
-            grafo = Grafo(num_vertices)
-            Arquivo.carregar_arestas(arquivo_entrada, grafo)
-            root.deiconify()
-            app = GrafoApp(root, grafo)
-            root.mainloop()
-        except FileNotFoundError:
-            messagebox.showerror("Erro", f"Arquivo '{arquivo_entrada}' não encontrado.")
-        except Exception as e:
-            messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
+            # Criação da janela principal
+            root = tk.Tk()
+            root.withdraw()  # Oculta a janela principal
+            
+            # Garante que a janela está no topo
+            root.lift()  # Traz a janela para frente
+            root.attributes("-topmost", True)  # Força a janela a estar no topo
+            root.update()  # Atualiza o estado da janela
 
-            root.withdraw()
+            # Diálogo para selecionar arquivo
             arquivo_entrada = filedialog.askopenfilename(
                 title="Selecione o arquivo de entrada",
                 filetypes=(("Arquivos de Texto", "*.txt"), ("Todos os Arquivos", "*.*"))
             )
+
             if not arquivo_entrada:
                 messagebox.showerror("Erro", "Nenhum arquivo especificado. Encerrando o programa.")
                 return
-            try:
-                num_vertices = Arquivo.carregar_num_vertices(arquivo_entrada)
-                grafo = Grafo(num_vertices)
-                Arquivo.carregar_arestas(arquivo_entrada, grafo)
-                root.deiconify()
-                app = GrafoApp(root, grafo)
-                root.mainloop()
-            except FileNotFoundError:
-                messagebox.showerror("Erro", f"Arquivo '{arquivo_entrada}' não encontrado.")
-            except Exception as e:
-                messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
+            
+            # Carrega o grafo do arquivo
+            num_vertices = Arquivo.carregar_num_vertices(arquivo_entrada)
+            grafo = Grafo(num_vertices)
+            Arquivo.carregar_arestas(arquivo_entrada, grafo)
+
+            # Torna a janela principal visível
+            root.deiconify()
+
+            # Inicializa a aplicação
+            app = GrafoApp(root, grafo)
+
+            # Inicia o loop da interface
+            root.mainloop()
+
+        except FileNotFoundError:
+            messagebox.showerror("Erro", "Arquivo não encontrado. Encerrando o programa.")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Ocorreu um erro: {str(e)}")
 
 

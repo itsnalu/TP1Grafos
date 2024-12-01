@@ -6,11 +6,10 @@ from tkinter import messagebox, filedialog
 import sys
 
 def main():
-
     print("1 - Saida no terminal")
     print("2 - Saida por interface")
     saida = int(input("Escolha a saida desejada:"))
-    
+
     match(saida):
         case 1:
             arquivo = input("Digite o numero do arquivo + .txt:")
@@ -24,13 +23,8 @@ def main():
 
             grafo.menu()
 
-        case 2:      
-            root = tk.Tk()
-            root.title("Teste de Interface Tkinter")
-            label = tk.Label(root, text="Tkinter está funcionando!", font=("Arial", 16))
-            label.pack(pady=20)
-            root.mainloop()
-
+        case 2:
+            GrafoApp.inicializa_interface()
         case _:
             print("Opção inválida. Encerrando o programa.")
             sys.exit(1)
