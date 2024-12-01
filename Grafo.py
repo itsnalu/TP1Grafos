@@ -115,8 +115,7 @@ class Grafo:
 
         return resultado
 
-
-    def printarDistancias(self, dist):
+    def printar_distancias(self, dist):
         print("Matrix de menores distâncias entre cada par de vértices:")
         for i in range(len(dist)):
             for j in range(len(dist)):
@@ -126,7 +125,7 @@ class Grafo:
                     print("%7d" % dist[i][j], end=" ")
             print()
 
-    def floydWarshall(self):
+    def floyd_warshall(self):
         num_vertices = self.num_vertices
         
         # Criar uma cópia da matriz de adjacência para evitar modificações
@@ -138,9 +137,6 @@ class Grafo:
                     # Atualizar dist[i][j] se passar por k for mais curto
                     dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
         return dist
-        
-
-   
     
     # TODO 1 - Implementar cálculo da densidade ε(G) com a fórmula ε(G) = 2 * |E| / (|V| * (|V| - 1)).
     def calcular_densidade(self):
