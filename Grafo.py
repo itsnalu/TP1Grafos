@@ -302,7 +302,8 @@ class Grafo:
                 origem = int(input())
                 print("\nCalculando distâncias e caminhos mínimos...")
                 if(self.bellman_ford(origem)):
-                    self.imprimir_caminhos(origem)
+                    result = self.imprimir_caminhos(origem)
+                    print(result)
             elif opcao == "0":
                 print("Saindo do programa...")
                 break
